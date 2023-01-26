@@ -26,7 +26,7 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/members', methods=['GET'])
-def handle_hello():
+def handle_members():
 
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
@@ -34,9 +34,27 @@ def handle_hello():
         "hello": "world",
         "family": members
     }
-
-
+    
     return jsonify(response_body), 200
+    return jsonify({"mesage":"Familiares no encontrados"}),400
+
+@app.route('/member/<int:member_id>', methods=['GET'])
+    def handle_member(member_id):
+        member = FamilyStructure.get_member(member_id)
+        return jsonify(member), 200
+        return jsonify({"mesage":"Familiar no encontrados"}),400
+
+@app.route('/member' , methods=['POST'])
+    def handle_new_member(first_name, last_name,age,lucky_numbers):
+        new_member = FamilyStructure.add_member(first_name, last_name,age,lucky_numbers)
+        return jsonify(new_member),200
+        return jsonify({"mesage":"No se pudo agregar al familiar"}),400
+
+@app.route('/member/<int:member_id>',methods=['DELETE'])
+    def handle_delete_member(member_id):
+        deleted_member = FamilyStructure.delete_member(member_id)
+        return jsonify(deleted_member),200
+        return jsonify({"mesage":"No se puedo eliminar al familiar"}),400
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
